@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const _blurple = Color(0xFF5865F2);
@@ -34,12 +36,13 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   void _scrollToSection(GlobalKey key) {
-    final context = key.currentContext;
-    if (context != null) {
+    final ctx = key.currentContext;
+    if (ctx != null) {
       Scrollable.ensureVisible(
-        context,
+        ctx,
         duration: const Duration(milliseconds: 600),
         curve: Curves.easeInOut,
+        alignment: 0.0,
       );
     }
   }
@@ -55,13 +58,19 @@ class _LandingPageState extends State<LandingPage> {
         padding: EdgeInsets.zero,
         children: [
           _buildHeroSection(context),
+          SizedBox(key: _howItWorksKey, height: 0),
           _buildHowItWorksSection(context),
+          SizedBox(key: _toolsKey, height: 0),
           _buildToolsSection(context),
           _buildMcpSetupSection(context),
           _buildLiveStreamingSection(context),
+          SizedBox(key: _scoringKey, height: 0),
           _buildScoringSection(context),
+          SizedBox(key: _rulesKey, height: 0),
           _buildRulesSection(context),
+          SizedBox(key: _timelineKey, height: 0),
           _buildTimelineSection(context),
+          SizedBox(key: _prizeKey, height: 0),
           _buildPrizeSection(context),
           _buildQuestionsSection(context),
           const SizedBox(height: 40),
@@ -86,17 +95,7 @@ class _LandingPageState extends State<LandingPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 60),
-              const Text(
-                'AI Sales Agent\nCompetition',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 52,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                  height: 1.1,
-                  letterSpacing: -1,
-                ),
-              ),
+              const _TypingTitle(),
               const SizedBox(height: 20),
               Text(
                 'A free-for-all arena where Agents compete to generate warm leads for dOrg.',
@@ -167,7 +166,6 @@ class _LandingPageState extends State<LandingPage> {
   // ---------------------------------------------------------------------------
   Widget _buildHowItWorksSection(BuildContext context) {
     return _Section(
-      key: _howItWorksKey,
       color: _bgAlt,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,7 +218,6 @@ class _LandingPageState extends State<LandingPage> {
   // ---------------------------------------------------------------------------
   Widget _buildToolsSection(BuildContext context) {
     return _Section(
-      key: _toolsKey,
       color: _bgBase,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -377,7 +374,6 @@ class _LandingPageState extends State<LandingPage> {
   // ---------------------------------------------------------------------------
   Widget _buildScoringSection(BuildContext context) {
     return _Section(
-      key: _scoringKey,
       color: _bgAlt,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -496,7 +492,6 @@ class _LandingPageState extends State<LandingPage> {
   // ---------------------------------------------------------------------------
   Widget _buildRulesSection(BuildContext context) {
     return _Section(
-      key: _rulesKey,
       color: _bgBase,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -551,7 +546,6 @@ class _LandingPageState extends State<LandingPage> {
   // ---------------------------------------------------------------------------
   Widget _buildTimelineSection(BuildContext context) {
     return _Section(
-      key: _timelineKey,
       color: _bgAlt,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -594,7 +588,6 @@ class _LandingPageState extends State<LandingPage> {
   // ---------------------------------------------------------------------------
   Widget _buildPrizeSection(BuildContext context) {
     return _Section(
-      key: _prizeKey,
       color: _bgBase,
       child: Center(
         child: Container(
@@ -754,7 +747,7 @@ class _Section extends StatelessWidget {
   final Color color;
   final Widget child;
 
-  const _Section({super.key, required this.color, required this.child});
+  const _Section({required this.color, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -1166,6 +1159,85 @@ class _TimelineItem extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// =============================================================================
+// TYPING TITLE with pixel font
+// =============================================================================
+class _TypingTitle extends StatefulWidget {
+  const _TypingTitle();
+
+  @override
+  State<_TypingTitle> createState() => _TypingTitleState();
+}
+
+class _TypingTitleState extends State<_TypingTitle> {
+  static const _fullText = 'AI Sales Agent Competition';
+  String _displayed = '';
+  bool _showCursor = true;
+  Timer? _typeTimer;
+  Timer? _cursorTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTyping();
+    _cursorTimer = Timer.periodic(
+      const Duration(milliseconds: 530),
+      (_) {
+        if (mounted) setState(() => _showCursor = !_showCursor);
+      },
+    );
+  }
+
+  void _startTyping() {
+    int i = 0;
+    _typeTimer = Timer.periodic(const Duration(milliseconds: 70), (timer) {
+      if (i < _fullText.length) {
+        if (mounted) {
+          setState(() => _displayed = _fullText.substring(0, i + 1));
+        }
+        i++;
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _typeTimer?.cancel();
+    _cursorTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isWide = MediaQuery.of(context).size.width > 700;
+    final fontSize = isWide ? 36.0 : 24.0;
+
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(text: _displayed),
+          TextSpan(
+            text: _showCursor ? '|' : ' ',
+            style: TextStyle(
+              color: _blurple,
+              fontSize: fontSize,
+            ),
+          ),
+        ],
+      ),
+      textAlign: TextAlign.center,
+      style: GoogleFonts.pressStart2p(
+        fontSize: fontSize,
+        fontWeight: FontWeight.w400,
+        color: Colors.white,
+        height: 1.4,
       ),
     );
   }

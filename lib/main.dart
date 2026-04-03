@@ -41,6 +41,7 @@ class _HackathonDashboardAppState extends State<HackathonDashboardApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
+        fontFamily: 'CascadiaCode',
         // Semi-transparent so the Game of Life canvas shows through
         scaffoldBackgroundColor: const Color(0xDD121218),
         colorScheme: const ColorScheme.dark(
