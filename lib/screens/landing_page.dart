@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 const _blurple = Color(0xFF5865F2);
@@ -10,9 +9,6 @@ const _bgAlt = Color(0xFF16161E);
 const _cardBg = Color(0xFF1E1E2E);
 const _cardBorder = Color(0xFF2A2A3E);
 
-const _announcementUrl =
-    'https://raw.githubusercontent.com/EightRice/dorg-hackathon/master/announcement.md';
-
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
 
@@ -21,41 +17,30 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
-  bool _loading = true;
-  String? _error;
+  final _scrollController = ScrollController();
+
+  // Section keys for scroll-to navigation
+  final _howItWorksKey = GlobalKey();
+  final _toolsKey = GlobalKey();
+  final _scoringKey = GlobalKey();
+  final _rulesKey = GlobalKey();
+  final _timelineKey = GlobalKey();
+  final _prizeKey = GlobalKey();
 
   @override
-  void initState() {
-    super.initState();
-    _fetchAnnouncement();
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
-  Future<void> _fetchAnnouncement() async {
-    try {
-      final response = await http.get(Uri.parse(_announcementUrl));
-      if (response.statusCode == 200) {
-        // Content fetched successfully; sections are rendered from
-        // hardcoded structure, so we just clear the loading state.
-        if (mounted) {
-          setState(() {
-            _loading = false;
-          });
-        }
-      } else {
-        if (mounted) {
-          setState(() {
-            _error = 'Failed to load content (${response.statusCode})';
-            _loading = false;
-          });
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _error = 'Could not connect: $e';
-          _loading = false;
-        });
-      }
+  void _scrollToSection(GlobalKey key) {
+    final context = key.currentContext;
+    if (context != null) {
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOut,
+      );
     }
   }
 
@@ -66,6 +51,7 @@ class _LandingPageState extends State<LandingPage> {
     // based on the known announcement structure.
     return SelectionArea(
       child: ListView(
+        controller: _scrollController,
         padding: EdgeInsets.zero,
         children: [
           _buildHeroSection(context),
@@ -78,25 +64,6 @@ class _LandingPageState extends State<LandingPage> {
           _buildTimelineSection(context),
           _buildPrizeSection(context),
           _buildQuestionsSection(context),
-          if (_loading)
-            const Padding(
-              padding: EdgeInsets.all(32),
-              child: Center(
-                child:
-                    CircularProgressIndicator(color: _blurple, strokeWidth: 2),
-              ),
-            ),
-          if (_error != null)
-            Padding(
-              padding: const EdgeInsets.all(32),
-              child: Center(
-                child: Text(
-                  _error!,
-                  style: TextStyle(
-                      color: Colors.white.withAlpha(100), fontSize: 13),
-                ),
-              ),
-            ),
           const SizedBox(height: 40),
         ],
       ),
@@ -119,25 +86,6 @@ class _LandingPageState extends State<LandingPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 60),
-              // Small badge
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                decoration: BoxDecoration(
-                  color: _blurple.withAlpha(25),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: _blurple.withAlpha(80)),
-                ),
-                child: const Text(
-                  'dOrg Hackathon',
-                  style: TextStyle(
-                    color: _blurple,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 28),
               const Text(
                 'AI Sales Agent\nCompetition',
                 textAlign: TextAlign.center,
@@ -163,10 +111,9 @@ class _LandingPageState extends State<LandingPage> {
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 640),
                 child: Text(
-                  'Good sales is good listening. '
-                  'Great salespeople find people with genuine needs and connect them to real solutions. '
-                  'We believe AI agents can do exactly this -- scanning conversations across channels, '
-                  'identifying real pain points, and surfacing warm leads that a human can follow up on.',
+                  'Good sales is more than blasting messages. It identifies the right people, '
+                  'on the right channels, at the right time, with the right communication. '
+                  "That's what your agent should replicate.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 15,
@@ -176,23 +123,19 @@ class _LandingPageState extends State<LandingPage> {
                 ),
               ),
               const SizedBox(height: 36),
-              FilledButton.icon(
-                onPressed: () {
-                  Navigator.of(context).pushNamed('/scoreboard');
-                },
-                icon: const Icon(Icons.leaderboard, size: 18),
-                label: const Text(
-                  'Open Scoreboard',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-                ),
-                style: FilledButton.styleFrom(
-                  backgroundColor: _blurple,
-                  foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
+              // Section navigation buttons
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                alignment: WrapAlignment.center,
+                children: [
+                  _heroNavChip('How It Works', _howItWorksKey),
+                  _heroNavChip('Tools', _toolsKey),
+                  _heroNavChip('Scoring', _scoringKey),
+                  _heroNavChip('Rules', _rulesKey),
+                  _heroNavChip('Timeline', _timelineKey),
+                  _heroNavChip('Prize', _prizeKey),
+                ],
               ),
               const SizedBox(height: 60),
               // Scroll hint
@@ -206,11 +149,25 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
+  Widget _heroNavChip(String label, GlobalKey key) {
+    return OutlinedButton(
+      onPressed: () => _scrollToSection(key),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Colors.white.withAlpha(220),
+        side: BorderSide(color: Colors.white.withAlpha(50)),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      ),
+      child: Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+    );
+  }
+
   // ---------------------------------------------------------------------------
   // HOW IT WORKS - Registration
   // ---------------------------------------------------------------------------
   Widget _buildHowItWorksSection(BuildContext context) {
     return _Section(
+      key: _howItWorksKey,
       color: _bgAlt,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -263,6 +220,7 @@ class _LandingPageState extends State<LandingPage> {
   // ---------------------------------------------------------------------------
   Widget _buildToolsSection(BuildContext context) {
     return _Section(
+      key: _toolsKey,
       color: _bgBase,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,7 +278,7 @@ class _LandingPageState extends State<LandingPage> {
     const configJson = '''{
   "mcpServers": {
     "dorg-hackathon": {
-      "url": "https://hackathon-api.dorg.tech/mcp",
+      "url": "https://hackathon.dorg.tech/mcp",
       "headers": {
         "Authorization": "Bearer YOUR_TOKEN_HERE"
       }
@@ -371,21 +329,43 @@ class _LandingPageState extends State<LandingPage> {
   // LIVE STREAMING
   // ---------------------------------------------------------------------------
   Widget _buildLiveStreamingSection(BuildContext context) {
+    const wsConfig = 'ws://hackathon.dorg.tech/ws?token=YOUR_TOKEN';
+
     return _Section(
       color: _bgBase,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _sectionTitle('Live Streaming'),
+          _sectionTitle('Optional: Live Streaming'),
           const SizedBox(height: 16),
           _InfoCard(
             icon: Icons.stream,
             title: 'Real-time Activity Feed',
             description:
-                'All agent actions are streamed live via WebSocket. '
-                'Watch the competition unfold in real time on the Activity tab, '
-                'or connect your own client to the WebSocket endpoint.',
+                'If you want the community to watch your agent think in real time, '
+                'connect to our WebSocket. Send raw text frames — anything your agent '
+                'is thinking or doing. We render it as a live-updating embed in your '
+                'Discord thread. Purely optional and cosmetic, but it makes for a good show.',
             accentColor: _blurple,
+          ),
+          const SizedBox(height: 16),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0D0D14),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: _cardBorder),
+            ),
+            child: const SelectableText(
+              wsConfig,
+              style: TextStyle(
+                fontFamily: 'monospace',
+                fontSize: 14,
+                color: _blurple,
+                height: 1.6,
+              ),
+            ),
           ),
         ],
       ),
@@ -397,6 +377,7 @@ class _LandingPageState extends State<LandingPage> {
   // ---------------------------------------------------------------------------
   Widget _buildScoringSection(BuildContext context) {
     return _Section(
+      key: _scoringKey,
       color: _bgAlt,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -515,6 +496,7 @@ class _LandingPageState extends State<LandingPage> {
   // ---------------------------------------------------------------------------
   Widget _buildRulesSection(BuildContext context) {
     return _Section(
+      key: _rulesKey,
       color: _bgBase,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -569,6 +551,7 @@ class _LandingPageState extends State<LandingPage> {
   // ---------------------------------------------------------------------------
   Widget _buildTimelineSection(BuildContext context) {
     return _Section(
+      key: _timelineKey,
       color: _bgAlt,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -611,6 +594,7 @@ class _LandingPageState extends State<LandingPage> {
   // ---------------------------------------------------------------------------
   Widget _buildPrizeSection(BuildContext context) {
     return _Section(
+      key: _prizeKey,
       color: _bgBase,
       child: Center(
         child: Container(
@@ -770,7 +754,7 @@ class _Section extends StatelessWidget {
   final Color color;
   final Widget child;
 
-  const _Section({required this.color, required this.child});
+  const _Section({super.key, required this.color, required this.child});
 
   @override
   Widget build(BuildContext context) {

@@ -262,19 +262,14 @@ class _DashboardShell extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF5865F2), Color(0xFF8B5CF6)],
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child:
-                  const Icon(Icons.smart_toy, size: 18, color: Colors.white),
+            Image.network(
+              'https://images.spr.so/cdn-cgi/imagedelivery/j42No7y-dcokJuNgXeA0ig/178f82ad-0793-4a95-927f-9db6c9e9cffa/dOrg_White_Logo_Transparent_(PNG)/w=128,quality=90,fit=scale-down',
+              width: 28,
+              height: 28,
+              filterQuality: FilterQuality.high,
+              errorBuilder: (_, __, ___) => const SizedBox(width: 28, height: 28),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
