@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'api_client.dart';
+import 'screens/landing_page.dart';
 import 'screens/scoreboard_screen.dart';
 import 'screens/leads_screen.dart';
 import 'screens/activity_screen.dart';
@@ -8,8 +9,30 @@ void main() {
   runApp(const HackathonDashboardApp());
 }
 
-class HackathonDashboardApp extends StatelessWidget {
+// =============================================================================
+// APP ROOT
+// =============================================================================
+class HackathonDashboardApp extends StatefulWidget {
   const HackathonDashboardApp({super.key});
+
+  @override
+  State<HackathonDashboardApp> createState() => _HackathonDashboardAppState();
+}
+
+class _HackathonDashboardAppState extends State<HackathonDashboardApp> {
+  late final ApiClient _apiClient;
+
+  @override
+  void initState() {
+    super.initState();
+    _apiClient = ApiClient();
+  }
+
+  @override
+  void dispose() {
+    _apiClient.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +41,18 @@ class HackathonDashboardApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF121218),
+        // Semi-transparent so the Game of Life canvas shows through
+        scaffoldBackgroundColor: const Color(0xDD121218),
         colorScheme: const ColorScheme.dark(
           primary: Color(0xFF5865F2),
           secondary: Color(0xFF5865F2),
           surface: Color(0xFF1E1E2E),
         ),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF121218),
+          backgroundColor: Colors.transparent,
           elevation: 0,
           centerTitle: false,
+          scrolledUnderElevation: 0,
         ),
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: const Color(0xFF16161E),
@@ -49,66 +74,193 @@ class HackathonDashboardApp extends StatelessWidget {
             if (states.contains(WidgetState.selected)) {
               return const IconThemeData(color: Color(0xFF5865F2), size: 24);
             }
-            return IconThemeData(
-                color: Colors.white.withAlpha(100), size: 24);
+            return IconThemeData(color: Colors.white.withAlpha(100), size: 24);
           }),
         ),
         snackBarTheme: const SnackBarThemeData(
           behavior: SnackBarBehavior.floating,
         ),
       ),
-      home: const DashboardShell(),
+      initialRoute: '/',
+      onGenerateRoute: (settings) {
+        final name = settings.name ?? '/';
+        Widget page;
+        switch (name) {
+          case '/scoreboard':
+            page = _DashboardShell(
+              apiClient: _apiClient,
+              currentRoute: '/scoreboard',
+            );
+          case '/leads':
+            page = _DashboardShell(
+              apiClient: _apiClient,
+              currentRoute: '/leads',
+            );
+          case '/activity':
+            page = _DashboardShell(
+              apiClient: _apiClient,
+              currentRoute: '/activity',
+            );
+          case '/':
+          default:
+            page = _DashboardShell(
+              apiClient: _apiClient,
+              currentRoute: '/',
+            );
+        }
+        return MaterialPageRoute(
+          builder: (_) => page,
+          settings: settings,
+        );
+      },
     );
   }
 }
 
-class DashboardShell extends StatefulWidget {
-  const DashboardShell({super.key});
+// =============================================================================
+// DASHBOARD SHELL - Responsive nav wrapper
+// =============================================================================
+class _DashboardShell extends StatelessWidget {
+  final ApiClient apiClient;
+  final String currentRoute;
 
-  @override
-  State<DashboardShell> createState() => _DashboardShellState();
-}
+  const _DashboardShell({
+    required this.apiClient,
+    required this.currentRoute,
+  });
 
-class _DashboardShellState extends State<DashboardShell> {
-  int _currentIndex = 0;
-  late final ApiClient _apiClient;
-  late final List<Widget> _screens;
+  static const _blurple = Color(0xFF5865F2);
 
-  @override
-  void initState() {
-    super.initState();
-    _apiClient = ApiClient();
-    _screens = [
-      ScoreboardScreen(apiClient: _apiClient),
-      LeadsScreen(apiClient: _apiClient),
-      ActivityScreen(apiClient: _apiClient),
-    ];
-  }
+  bool get _isLanding => currentRoute == '/';
 
-  @override
-  void dispose() {
-    _apiClient.dispose();
-    super.dispose();
+  int get _dashboardIndex {
+    switch (currentRoute) {
+      case '/scoreboard':
+        return 0;
+      case '/leads':
+        return 1;
+      case '/activity':
+        return 2;
+      default:
+        return -1;
+    }
   }
 
   String get _title {
-    switch (_currentIndex) {
-      case 0:
+    switch (currentRoute) {
+      case '/scoreboard':
         return 'Scoreboard';
-      case 1:
+      case '/leads':
         return 'Leads';
-      case 2:
+      case '/activity':
         return 'Activity';
       default:
         return '';
     }
   }
 
+  void _navigate(BuildContext context, String route) {
+    if (route != currentRoute) {
+      Navigator.of(context).pushReplacementNamed(route);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final isDesktop = width > 800;
+
+    Widget body;
+    if (_isLanding) {
+      body = const LandingPage();
+    } else {
+      switch (currentRoute) {
+        case '/scoreboard':
+          body = ScoreboardScreen(apiClient: apiClient);
+        case '/leads':
+          body = LeadsScreen(apiClient: apiClient);
+        case '/activity':
+          body = ActivityScreen(apiClient: apiClient);
+        default:
+          body = const LandingPage();
+      }
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
+      appBar: _buildAppBar(context, isDesktop),
+      body: body,
+      bottomNavigationBar:
+          (!isDesktop && !_isLanding) ? _buildBottomNav(context) : null,
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context, bool isDesktop) {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      title: _buildLogoSection(context),
+      actions: [
+        if (isDesktop) ...[
+          _NavTextButton(
+            label: 'Home',
+            isActive: currentRoute == '/',
+            onTap: () => _navigate(context, '/'),
+          ),
+          _NavTextButton(
+            label: 'Scoreboard',
+            isActive: currentRoute == '/scoreboard',
+            onTap: () => _navigate(context, '/scoreboard'),
+          ),
+          _NavTextButton(
+            label: 'Leads',
+            isActive: currentRoute == '/leads',
+            onTap: () => _navigate(context, '/leads'),
+          ),
+          _NavTextButton(
+            label: 'Activity',
+            isActive: currentRoute == '/activity',
+            onTap: () => _navigate(context, '/activity'),
+          ),
+          const SizedBox(width: 8),
+          if (_isLanding)
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: FilledButton(
+                onPressed: () => _navigate(context, '/scoreboard'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: _blurple,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+                child: const Text(
+                  'Open Scoreboard',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                ),
+              ),
+            )
+          else
+            const SizedBox(width: 16),
+        ] else ...[
+          if (_isLanding)
+            IconButton(
+              onPressed: () => _navigate(context, '/scoreboard'),
+              icon: const Icon(Icons.leaderboard, color: _blurple),
+              tooltip: 'Scoreboard',
+            ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildLogoSection(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _navigate(context, '/'),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 32,
@@ -119,59 +271,96 @@ class _DashboardShellState extends State<DashboardShell> {
                 ),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.smart_toy, size: 18, color: Colors.white),
+              child:
+                  const Icon(Icons.smart_toy, size: 18, color: Colors.white),
             ),
             const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  _title,
+                  _isLanding ? 'dOrg Hackathon' : _title,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 17,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
-                Text(
-                  'dOrg Sales Agent Hackathon',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.white.withAlpha(80),
+                if (!_isLanding)
+                  Text(
+                    'dOrg Sales Agent Hackathon',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.white.withAlpha(80),
+                    ),
                   ),
-                ),
               ],
             ),
           ],
         ),
       ),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
+    );
+  }
+
+  Widget _buildBottomNav(BuildContext context) {
+    return NavigationBar(
+      height: 68,
+      selectedIndex: _dashboardIndex.clamp(0, 2),
+      onDestinationSelected: (index) {
+        final routes = ['/scoreboard', '/leads', '/activity'];
+        _navigate(context, routes[index]);
+      },
+      destinations: const [
+        NavigationDestination(
+          icon: Icon(Icons.leaderboard_outlined),
+          selectedIcon: Icon(Icons.leaderboard),
+          label: 'Scoreboard',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.person_search_outlined),
+          selectedIcon: Icon(Icons.person_search),
+          label: 'Leads',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.history_outlined),
+          selectedIcon: Icon(Icons.history),
+          label: 'Activity',
+        ),
+      ],
+    );
+  }
+}
+
+// =============================================================================
+// NAV TEXT BUTTON (desktop top bar)
+// =============================================================================
+class _NavTextButton extends StatelessWidget {
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _NavTextButton({
+    required this.label,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: onTap,
+      style: TextButton.styleFrom(
+        foregroundColor:
+            isActive ? const Color(0xFF5865F2) : Colors.white.withAlpha(180),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
-      bottomNavigationBar: NavigationBar(
-        height: 68,
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (index) {
-          setState(() => _currentIndex = index);
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.leaderboard_outlined),
-            selectedIcon: Icon(Icons.leaderboard),
-            label: 'Scoreboard',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_search_outlined),
-            selectedIcon: Icon(Icons.person_search),
-            label: 'Leads',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.history_outlined),
-            selectedIcon: Icon(Icons.history),
-            label: 'Activity',
-          ),
-        ],
+      child: Text(
+        label,
+        style: TextStyle(
+          fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+          fontSize: 14,
+        ),
       ),
     );
   }

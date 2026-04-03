@@ -4,6 +4,7 @@ import 'package:hackathon_dashboard/main.dart';
 void main() {
   testWidgets('App renders dashboard shell', (WidgetTester tester) async {
     await tester.pumpWidget(const HackathonDashboardApp());
-    expect(find.text('Scoreboard'), findsWidgets);
+    // The landing page should show the title text
+    expect(find.text('dOrg Hackathon'), findsWidgets);
   });
 }
