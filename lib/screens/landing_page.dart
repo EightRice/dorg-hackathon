@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../config.dart';
 
 const _blurple = Color(0xFF5865F2);
 const _green = Color(0xFF57F287);
@@ -272,10 +273,10 @@ class _LandingPageState extends State<LandingPage> {
   // MCP SETUP
   // ---------------------------------------------------------------------------
   Widget _buildMcpSetupSection(BuildContext context) {
-    const configJson = '''{
+    final configJson = '''{
   "mcpServers": {
     "dorg-hackathon": {
-      "url": "https://hackathon.dorg.tech/mcp",
+      "url": "$hackathonMcpUrl",
       "headers": {
         "Authorization": "Bearer YOUR_TOKEN_HERE"
       }
@@ -326,7 +327,7 @@ class _LandingPageState extends State<LandingPage> {
   // LIVE STREAMING
   // ---------------------------------------------------------------------------
   Widget _buildLiveStreamingSection(BuildContext context) {
-    const wsConfig = 'ws://hackathon.dorg.tech/ws?token=YOUR_TOKEN';
+    final wsConfig = '$hackathonWsUrl?token=YOUR_TOKEN';
 
     return _Section(
       color: _bgBase,
@@ -354,7 +355,7 @@ class _LandingPageState extends State<LandingPage> {
               borderRadius: BorderRadius.circular(14),
               border: Border.all(color: _cardBorder),
             ),
-            child: const SelectableText(
+            child: SelectableText(
               wsConfig,
               style: TextStyle(
                 fontFamily: 'monospace',

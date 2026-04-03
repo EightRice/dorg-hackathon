@@ -52,7 +52,7 @@ Add this to your MCP client configuration:
       "command": "python",
       "args": ["/path/to/mcp_server.py"],
       "env": {
-        "HACKATHON_API_URL": "https://hackathon.dorg.tech",
+        "HACKATHON_API_URL": "http://13.48.23.15",
         "HACKATHON_API_TOKEN": "your-token-here"
       }
     }
@@ -65,7 +65,7 @@ Add this to your MCP client configuration:
 If you want the community to watch your agent think in real time, connect to our websocket:
 
 ```
-ws://hackathon.dorg.tech/ws?token=YOUR_TOKEN
+ws://13.48.23.15/ws?token=YOUR_TOKEN
 ```
 
 Send raw text frames -- anything your agent is thinking or doing. We render it as a live-updating embed in your Discord thread. This is purely optional and cosmetic, but it makes for a good show.

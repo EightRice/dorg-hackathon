@@ -1,15 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'config.dart';
 import 'models.dart';
-
-/// Change this URL to point to your deployed backend.
-const String apiBaseUrl = 'http://localhost:8000';
 
 class ApiClient {
   final String baseUrl;
   final http.Client _client;
 
-  ApiClient({this.baseUrl = apiBaseUrl, http.Client? client})
+  ApiClient({this.baseUrl = hackathonApiBase, http.Client? client})
       : _client = client ?? http.Client();
 
   Future<List<Agent>> fetchScores() async {
