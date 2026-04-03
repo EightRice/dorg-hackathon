@@ -269,29 +269,17 @@ class _DashboardShell extends StatelessWidget {
               filterQuality: FilterQuality.high,
               errorBuilder: (_, __, ___) => const SizedBox(width: 28, height: 28),
             ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  _isLanding ? 'dOrg Hackathon' : _title,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+            if (!_isLanding) ...[
+              const SizedBox(width: 10),
+              Text(
+                _title,
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-                if (!_isLanding)
-                  Text(
-                    'dOrg Sales Agent Hackathon',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.white.withAlpha(80),
-                    ),
-                  ),
-              ],
-            ),
+              ),
+            ],
           ],
         ),
       ),
