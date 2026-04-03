@@ -147,19 +147,6 @@ class _DashboardShell extends StatelessWidget {
     }
   }
 
-  String get _title {
-    switch (currentRoute) {
-      case '/scoreboard':
-        return 'Scoreboard';
-      case '/leads':
-        return 'Leads';
-      case '/activity':
-        return 'Activity';
-      default:
-        return '';
-    }
-  }
-
   void _navigate(BuildContext context, String route) {
     if (route != currentRoute) {
       Navigator.of(context).pushReplacementNamed(route);
@@ -200,12 +187,28 @@ class _DashboardShell extends StatelessWidget {
       automaticallyImplyLeading: false,
       title: _buildLogoSection(context),
       actions: [
-        if (isDesktop) ...[
-          _NavTextButton(
-            label: 'Home',
-            isActive: currentRoute == '/',
-            onTap: () => _navigate(context, '/'),
+        if (_isLanding) ...[
+          // Landing page: only "Open Scoreboard" button
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: FilledButton(
+              onPressed: () => _navigate(context, '/scoreboard'),
+              style: FilledButton.styleFrom(
+                backgroundColor: _blurple,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
+              child: const Text(
+                'Open Scoreboard',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              ),
+            ),
           ),
+        ] else if (isDesktop) ...[
+          // Dashboard desktop: nav links (logo click → landing)
           _NavTextButton(
             label: 'Scoreboard',
             isActive: currentRoute == '/scoreboard',
@@ -221,35 +224,7 @@ class _DashboardShell extends StatelessWidget {
             isActive: currentRoute == '/activity',
             onTap: () => _navigate(context, '/activity'),
           ),
-          const SizedBox(width: 8),
-          if (_isLanding)
-            Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: FilledButton(
-                onPressed: () => _navigate(context, '/scoreboard'),
-                style: FilledButton.styleFrom(
-                  backgroundColor: _blurple,
-                  foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-                child: const Text(
-                  'Open Scoreboard',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-                ),
-              ),
-            )
-          else
-            const SizedBox(width: 16),
-        ] else ...[
-          if (_isLanding)
-            IconButton(
-              onPressed: () => _navigate(context, '/scoreboard'),
-              icon: const Icon(Icons.leaderboard, color: _blurple),
-              tooltip: 'Scoreboard',
-            ),
+          const SizedBox(width: 16),
         ],
       ],
     );
@@ -260,28 +235,11 @@ class _DashboardShell extends StatelessWidget {
       onTap: () => _navigate(context, '/'),
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.network(
-              'https://images.spr.so/cdn-cgi/imagedelivery/j42No7y-dcokJuNgXeA0ig/178f82ad-0793-4a95-927f-9db6c9e9cffa/dOrg_White_Logo_Transparent_(PNG)/w=128,quality=90,fit=scale-down',
-              width: 28,
-              height: 28,
-              filterQuality: FilterQuality.high,
-              errorBuilder: (_, __, ___) => const SizedBox(width: 28, height: 28),
-            ),
-            if (!_isLanding) ...[
-              const SizedBox(width: 10),
-              Text(
-                _title,
-                style: const TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ],
+        child: Image.network(
+          'https://images.spr.so/cdn-cgi/imagedelivery/j42No7y-dcokJuNgXeA0ig/178f82ad-0793-4a95-927f-9db6c9e9cffa/dOrg_White_Logo_Transparent_(PNG)/w=128,quality=90,fit=scale-down',
+          height: 50,
+          filterQuality: FilterQuality.high,
+          errorBuilder: (_, __, ___) => const SizedBox(height: 50),
         ),
       ),
     );

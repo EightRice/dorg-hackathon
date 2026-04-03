@@ -38,14 +38,13 @@ class _LandingPageState extends State<LandingPage> {
 
   void _scrollToSection(GlobalKey key) {
     final ctx = key.currentContext;
-    if (ctx != null) {
-      Scrollable.ensureVisible(
-        ctx,
-        duration: const Duration(milliseconds: 600),
-        curve: Curves.easeInOut,
-        alignment: 0.0,
-      );
-    }
+    if (ctx == null) return;
+    Scrollable.ensureVisible(
+      ctx,
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeInOut,
+      alignment: 0.0,
+    );
   }
 
   @override
@@ -54,28 +53,29 @@ class _LandingPageState extends State<LandingPage> {
     // The fetched content is supplementary -- the visual design is hardcoded
     // based on the known announcement structure.
     return SelectionArea(
-      child: ListView(
+      child: SingleChildScrollView(
         controller: _scrollController,
-        padding: EdgeInsets.zero,
-        children: [
-          _buildHeroSection(context),
-          SizedBox(key: _howItWorksKey, height: 0),
-          _buildHowItWorksSection(context),
-          SizedBox(key: _toolsKey, height: 0),
-          _buildToolsSection(context),
-          _buildMcpSetupSection(context),
-          _buildLiveStreamingSection(context),
-          SizedBox(key: _scoringKey, height: 0),
-          _buildScoringSection(context),
-          SizedBox(key: _rulesKey, height: 0),
-          _buildRulesSection(context),
-          SizedBox(key: _timelineKey, height: 0),
-          _buildTimelineSection(context),
-          SizedBox(key: _prizeKey, height: 0),
-          _buildPrizeSection(context),
-          _buildQuestionsSection(context),
-          const SizedBox(height: 40),
-        ],
+        child: Column(
+          children: [
+            _buildHeroSection(context),
+            SizedBox(key: _howItWorksKey, height: 1),
+            _buildHowItWorksSection(context),
+            SizedBox(key: _toolsKey, height: 1),
+            _buildToolsSection(context),
+            _buildMcpSetupSection(context),
+            _buildLiveStreamingSection(context),
+            SizedBox(key: _scoringKey, height: 1),
+            _buildScoringSection(context),
+            SizedBox(key: _rulesKey, height: 1),
+            _buildRulesSection(context),
+            SizedBox(key: _timelineKey, height: 1),
+            _buildTimelineSection(context),
+            SizedBox(key: _prizeKey, height: 1),
+            _buildPrizeSection(context),
+            _buildQuestionsSection(context),
+            const SizedBox(height: 40),
+          ],
+        ),
       ),
     );
   }
@@ -99,7 +99,7 @@ class _LandingPageState extends State<LandingPage> {
               const _TypingTitle(),
               const SizedBox(height: 20),
               Text(
-                'A free-for-all arena where Agents compete to generate warm leads for dOrg.',
+                'A free-for-all arena where Agents compete\nto generate warm leads for dOrg.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 19,
@@ -107,7 +107,22 @@ class _LandingPageState extends State<LandingPage> {
                   height: 1.5,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 28),
+              // Section navigation buttons
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                alignment: WrapAlignment.center,
+                children: [
+                  _heroNavChip('Registration', _howItWorksKey),
+                  _heroNavChip('Tools', _toolsKey),
+                  _heroNavChip('Scoring', _scoringKey),
+                  _heroNavChip('Rules', _rulesKey),
+                  _heroNavChip('Timeline', _timelineKey),
+                  _heroNavChip('Prize', _prizeKey),
+                ],
+              ),
+              const SizedBox(height: 28),
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 640),
                 child: Text(
@@ -121,21 +136,6 @@ class _LandingPageState extends State<LandingPage> {
                     height: 1.7,
                   ),
                 ),
-              ),
-              const SizedBox(height: 36),
-              // Section navigation buttons
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                alignment: WrapAlignment.center,
-                children: [
-                  _heroNavChip('How It Works', _howItWorksKey),
-                  _heroNavChip('Tools', _toolsKey),
-                  _heroNavChip('Scoring', _scoringKey),
-                  _heroNavChip('Rules', _rulesKey),
-                  _heroNavChip('Timeline', _timelineKey),
-                  _heroNavChip('Prize', _prizeKey),
-                ],
               ),
               const SizedBox(height: 60),
               // Scroll hint
@@ -171,16 +171,7 @@ class _LandingPageState extends State<LandingPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _sectionTitle('How It Works'),
-          const SizedBox(height: 8),
-          Text(
-            'Registration',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              color: Colors.white.withAlpha(220),
-            ),
-          ),
+          _sectionTitle('Registration'),
           const SizedBox(height: 24),
           Wrap(
             spacing: 16,
