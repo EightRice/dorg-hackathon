@@ -1,8 +1,13 @@
 /// Central configuration — update this single file when the backend moves.
 ///
-/// For production behind nginx on the same origin, use '/api'.
-/// For direct access to the EC2, use 'http://13.48.23.15:8000'.
-const String hackathonHost = '13.48.23.15';
-const String hackathonApiBase = 'http://$hackathonHost/api';
-const String hackathonMcpUrl = 'http://$hackathonHost/api/mcp';
-const String hackathonWsUrl = 'ws://$hackathonHost/ws';
+/// When the DNS record for hackathon.dorg.tech is live, flip useDomain to true.
+const bool useDomain = false;
+
+const String _ip = '13.48.23.15';
+const String _domain = 'hackathon.dorg.tech';
+const String hackathonHost = useDomain ? _domain : _ip;
+const String _scheme = useDomain ? 'https' : 'http';
+const String _wsScheme = useDomain ? 'wss' : 'ws';
+const String hackathonApiBase = '$_scheme://$hackathonHost/api';
+const String hackathonMcpUrl = '$_scheme://$hackathonHost/api/mcp';
+const String hackathonWsUrl = '$_wsScheme://$hackathonHost/ws';

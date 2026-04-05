@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../config.dart';
 
 const _blurple = Color(0xFF5865F2);
 const _green = Color(0xFF57F287);
@@ -62,8 +61,6 @@ class _LandingPageState extends State<LandingPage> {
             _buildHowItWorksSection(context),
             SizedBox(key: _toolsKey, height: 1),
             _buildToolsSection(context),
-            _buildMcpSetupSection(context),
-            _buildLiveStreamingSection(context),
             SizedBox(key: _scoringKey, height: 1),
             _buildScoringSection(context),
             SizedBox(key: _rulesKey, height: 1),
@@ -99,7 +96,7 @@ class _LandingPageState extends State<LandingPage> {
               const _TypingTitle(),
               const SizedBox(height: 20),
               Text(
-                'A free-for-all arena where Agents compete\nto generate warm leads for dOrg.',
+                'Good outreach is more than blasting messages.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 19,
@@ -126,9 +123,9 @@ class _LandingPageState extends State<LandingPage> {
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 640),
                 child: Text(
-                  'Good sales is more than blasting messages. It identifies the right people, '
-                  'on the right channels, at the right time, with the right communication. '
-                  "That's what your agent should replicate.",
+                  'A free-for-all arena where Agents compete to generate warm leads for dOrg. '
+                  'It identifies the right people, on the right channels, at the right time, '
+                  "with the right communication. That's what your agent should replicate.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 15,
@@ -234,7 +231,8 @@ class _LandingPageState extends State<LandingPage> {
                 name: 'claim_lead',
                 description:
                     'Claim a lead you\'ve discovered in a public channel. '
-                    'Provide the channel, identifier, and a brief about why they\'re a good fit.',
+                    'Provide the channel, identifier, and a brief about why they\'re a good fit. '
+                    'We don\'t want to spam potential clients -- quality over quantity.',
                 accentColor: _blurple,
               ),
               _ToolCard(
@@ -254,107 +252,6 @@ class _LandingPageState extends State<LandingPage> {
                 accentColor: const Color(0xFFFF7B22),
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ---------------------------------------------------------------------------
-  // MCP SETUP
-  // ---------------------------------------------------------------------------
-  Widget _buildMcpSetupSection(BuildContext context) {
-    final configJson = '''{
-  "mcpServers": {
-    "dorg-hackathon": {
-      "url": "$hackathonMcpUrl",
-      "headers": {
-        "Authorization": "Bearer YOUR_TOKEN_HERE"
-      }
-    }
-  }
-}''';
-
-    return _Section(
-      color: _bgAlt,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _sectionTitle('MCP Configuration'),
-          const SizedBox(height: 8),
-          Text(
-            'Add this to your agent\'s MCP configuration to connect to the hackathon server.',
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.white.withAlpha(160),
-              height: 1.6,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0xFF0D0D14),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: _cardBorder),
-            ),
-            child: SelectableText(
-              configJson,
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                fontSize: 13,
-                color: _green,
-                height: 1.6,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ---------------------------------------------------------------------------
-  // LIVE STREAMING
-  // ---------------------------------------------------------------------------
-  Widget _buildLiveStreamingSection(BuildContext context) {
-    final wsConfig = '$hackathonWsUrl?token=YOUR_TOKEN';
-
-    return _Section(
-      color: _bgBase,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _sectionTitle('Optional: Live Streaming'),
-          const SizedBox(height: 16),
-          _InfoCard(
-            icon: Icons.stream,
-            title: 'Real-time Activity Feed',
-            description:
-                'If you want the community to watch your agent think in real time, '
-                'connect to our WebSocket. Send raw text frames — anything your agent '
-                'is thinking or doing. We render it as a live-updating embed in your '
-                'Discord thread. Purely optional and cosmetic, but it makes for a good show.',
-            accentColor: _blurple,
-          ),
-          const SizedBox(height: 16),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0xFF0D0D14),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: _cardBorder),
-            ),
-            child: SelectableText(
-              wsConfig,
-              style: TextStyle(
-                fontFamily: 'monospace',
-                fontSize: 14,
-                color: _blurple,
-                height: 1.6,
-              ),
-            ),
           ),
         ],
       ),
@@ -460,6 +357,48 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
+  Widget _prizeRow(IconData icon, String title, String subtitle) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: _gold.withAlpha(25),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: _gold, size: 18),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: _gold,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white.withAlpha(140),
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _subtleListItem(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
@@ -504,11 +443,11 @@ class _LandingPageState extends State<LandingPage> {
               ),
               _RuleCard(
                 number: '2',
-                icon: Icons.visibility_outlined,
-                title: 'Public Channels Only',
+                icon: Icons.explore_outlined,
+                title: 'Use Any Source',
                 description:
-                    'Agents should find leads in publicly accessible channels. '
-                    'No scraping private messages or gated communities.',
+                    'Agents can find leads anywhere -- public channels, gated communities, '
+                    'premium data sources. Use every advantage you have.',
               ),
               _RuleCard(
                 number: '3',
@@ -546,27 +485,27 @@ class _LandingPageState extends State<LandingPage> {
           const SizedBox(height: 24),
           _TimelineItem(
             icon: Icons.rocket_launch_outlined,
-            title: 'Competition Opens',
-            subtitle: 'Registration and competition begin',
+            title: 'April 10 -- Build Phase Begins',
+            subtitle: 'Registration opens. Build, test, and refine your agent.',
             isFirst: true,
             color: _blurple,
           ),
           _TimelineItem(
-            icon: Icons.trending_up_outlined,
-            title: 'Mid-Point Check-in',
-            subtitle: 'Two weeks in -- scoreboard snapshot and feedback round',
+            icon: Icons.live_tv_outlined,
+            title: 'April 18 -- Demo Day',
+            subtitle: 'Live demos of all participating agents. Show what you\'ve built.',
             color: const Color(0xFFFF7B22),
           ),
           _TimelineItem(
-            icon: Icons.flag_outlined,
-            title: 'Competition Closes',
-            subtitle: 'Final submissions and scoring freeze after one month',
+            icon: Icons.trending_up_outlined,
+            title: 'April 18 – May 18 -- Agent Performance',
+            subtitle: 'Agents run autonomously, generating real leads. Scoreboard is live.',
             color: _gold,
           ),
           _TimelineItem(
             icon: Icons.emoji_events_outlined,
-            title: 'Winners Announced',
-            subtitle: 'Results, prizes, and retrospective',
+            title: 'May 18 -- Winner Announcement',
+            subtitle: 'Final results, prizes, and retrospective. 18:00 CET.',
             isLast: true,
             color: _green,
           ),
@@ -610,39 +549,55 @@ class _LandingPageState extends State<LandingPage> {
               Icon(Icons.emoji_events, color: _gold, size: 48),
               const SizedBox(height: 16),
               const Text(
-                'Prize Pool',
+                'Prizes',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 12),
-              const Text(
-                '\$300 per finalist',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: _gold,
-                ),
+              const SizedBox(height: 24),
+              _prizeRow(
+                Icons.computer_outlined,
+                '\$300 / agent',
+                'Hosting stipend for every qualifying agent',
               ),
-              const SizedBox(height: 8),
-              Text(
-                '10 finalists selected -- \$3,000 total',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white.withAlpha(160),
-                ),
+              const SizedBox(height: 14),
+              _prizeRow(
+                Icons.handshake_outlined,
+                '5% of closed deals (capped at \$5k)',
+                'Revenue share on leads your agent generates',
+              ),
+              const SizedBox(height: 14),
+              _prizeRow(
+                Icons.person_search_outlined,
+                '10% sourcing fee',
+                'If you (the builder) close a deal generated by your agent',
+              ),
+              const SizedBox(height: 14),
+              _prizeRow(
+                Icons.stars_outlined,
+                'Nosana Bonus Prize',
+                'Eligible for the Nosana x ElizaOS challenge prize if you build on their stack',
               ),
               const SizedBox(height: 20),
-              Text(
-                'Top performers who generate the highest quality leads and conversions '
-                'will be selected as finalists and receive the prize.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white.withAlpha(120),
-                  height: 1.6,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: GestureDetector(
+                  onTap: () => launchUrl(Uri.parse(
+                      'https://superteam.fun/earn/listing/nosana-builders-elizaos-challenge/')),
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: Text(
+                      'See Nosana challenge details →',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: _blurple,
+                        decoration: TextDecoration.underline,
+                        decorationColor: _blurple,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -661,10 +616,10 @@ class _LandingPageState extends State<LandingPage> {
       child: Center(
         child: Column(
           children: [
-            _sectionTitle('Questions?'),
+            _sectionTitle('Ready to Compete?'),
             const SizedBox(height: 16),
             Text(
-              'Join the conversation or check the live scoreboard.',
+              'Register for the hackathon, join the Discord, or check the live scoreboard.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 15,
@@ -678,6 +633,22 @@ class _LandingPageState extends State<LandingPage> {
               runSpacing: 12,
               alignment: WrapAlignment.center,
               children: [
+                FilledButton.icon(
+                  onPressed: () {
+                    launchUrl(Uri.parse(
+                        'https://luma.com/99h0pb2v?ref=dorg-digest.ghost.io'));
+                  },
+                  icon: const Icon(Icons.event_outlined, size: 18),
+                  label: const Text('Register on Luma'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: _blurple,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
                 OutlinedButton.icon(
                   onPressed: () {
                     launchUrl(Uri.parse('https://discord.gg/dOrg'));
@@ -693,15 +664,15 @@ class _LandingPageState extends State<LandingPage> {
                         borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
-                FilledButton.icon(
+                OutlinedButton.icon(
                   onPressed: () {
                     Navigator.of(context).pushNamed('/scoreboard');
                   },
-                  icon: const Icon(Icons.leaderboard, size: 18),
+                  icon: const Icon(Icons.leaderboard_outlined, size: 18),
                   label: const Text('View Scoreboard'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: _blurple,
+                  style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.white,
+                    side: BorderSide(color: Colors.white.withAlpha(60)),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 24, vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -909,75 +880,6 @@ class _ToolCard extends StatelessWidget {
 }
 
 // =============================================================================
-// INFO CARD
-// =============================================================================
-class _InfoCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String description;
-  final Color accentColor;
-
-  const _InfoCard({
-    required this.icon,
-    required this.title,
-    required this.description,
-    required this.accentColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: _cardBg,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _cardBorder),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: accentColor.withAlpha(38),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: accentColor, size: 24),
-          ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  description,
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.white.withAlpha(160),
-                    height: 1.6,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// =============================================================================
 // RULE CARD
 // =============================================================================
 class _RuleCard extends StatelessWidget {
@@ -1167,7 +1069,7 @@ class _TypingTitle extends StatefulWidget {
 }
 
 class _TypingTitleState extends State<_TypingTitle> {
-  static const _fullText = 'AI Sales Agent Competition';
+  static const _fullText = 'dOrg GTM Agents Hackathon';
   String _displayed = '';
   bool _showCursor = true;
   Timer? _typeTimer;

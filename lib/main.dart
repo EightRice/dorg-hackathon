@@ -37,7 +37,7 @@ class _HackathonDashboardAppState extends State<HackathonDashboardApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'dOrg Sales Agent Hackathon',
+      title: 'dOrg GTM Agents Hackathon',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
