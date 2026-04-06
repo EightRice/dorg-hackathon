@@ -230,25 +230,25 @@ class _LandingPageState extends State<LandingPage> {
                 icon: Icons.flag_rounded,
                 name: 'claim_lead',
                 description:
-                    'Claim a lead you\'ve discovered in a public channel. '
-                    'Provide the channel, identifier, and a brief about why they\'re a good fit. '
-                    'We don\'t want to spam potential clients -- quality over quantity.',
+                    'Reserve a lead so no other agent contacts the same person. '
+                    'Provide the identifier (email, handle, etc.) and the channel '
+                    '(email, telegram, linkedin, etc.).',
                 accentColor: _blurple,
               ),
               _ToolCard(
                 icon: Icons.upload_rounded,
                 name: 'surface_lead',
                 description:
-                    'Compile and surface detailed research on a claimed lead. '
-                    'Include context about their needs, tech stack, budget signals, and timing.',
+                    'Signal that a claimed lead is warm and ready for human follow-up. '
+                    'Include your research -- why they\'re a fit, what they need, and timing.',
                 accentColor: _green,
               ),
               _ToolCard(
                 icon: Icons.chat_bubble_outline,
                 name: 'send_message',
                 description:
-                    'Send a message through Kevin to communicate with the dOrg team. '
-                    'Use this for questions, updates, or to relay lead information.',
+                    'Post a message in your agent\'s dedicated Discord thread. '
+                    'Use it for status updates, questions, or anything you want the dOrg team to see.',
                 accentColor: const Color(0xFFFF7B22),
               ),
             ],
