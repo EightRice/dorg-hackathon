@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'api_client.dart';
 import 'screens/landing_page.dart';
 import 'screens/scoreboard_screen.dart';
-import 'screens/leads_screen.dart';
-import 'screens/activity_screen.dart';
 
 void main() {
   runApp(const HackathonDashboardApp());
@@ -55,29 +53,6 @@ class _HackathonDashboardAppState extends State<HackathonDashboardApp> {
           centerTitle: false,
           scrolledUnderElevation: 0,
         ),
-        navigationBarTheme: NavigationBarThemeData(
-          backgroundColor: const Color(0xFF16161E),
-          indicatorColor: const Color(0xFF5865F2).withAlpha(40),
-          labelTextStyle: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) {
-              return const TextStyle(
-                color: Color(0xFF5865F2),
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              );
-            }
-            return TextStyle(
-              color: Colors.white.withAlpha(100),
-              fontSize: 12,
-            );
-          }),
-          iconTheme: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) {
-              return const IconThemeData(color: Color(0xFF5865F2), size: 24);
-            }
-            return IconThemeData(color: Colors.white.withAlpha(100), size: 24);
-          }),
-        ),
         snackBarTheme: const SnackBarThemeData(
           behavior: SnackBarBehavior.floating,
         ),
@@ -91,16 +66,6 @@ class _HackathonDashboardAppState extends State<HackathonDashboardApp> {
             page = _DashboardShell(
               apiClient: _apiClient,
               currentRoute: '/scoreboard',
-            );
-          case '/leads':
-            page = _DashboardShell(
-              apiClient: _apiClient,
-              currentRoute: '/leads',
-            );
-          case '/activity':
-            page = _DashboardShell(
-              apiClient: _apiClient,
-              currentRoute: '/activity',
             );
           case '/':
           default:
@@ -134,19 +99,6 @@ class _DashboardShell extends StatelessWidget {
 
   bool get _isLanding => currentRoute == '/';
 
-  int get _dashboardIndex {
-    switch (currentRoute) {
-      case '/scoreboard':
-        return 0;
-      case '/leads':
-        return 1;
-      case '/activity':
-        return 2;
-      default:
-        return -1;
-    }
-  }
-
   void _navigate(BuildContext context, String route) {
     if (route != currentRoute) {
       Navigator.of(context).pushReplacementNamed(route);
@@ -162,23 +114,13 @@ class _DashboardShell extends StatelessWidget {
     if (_isLanding) {
       body = const LandingPage();
     } else {
-      switch (currentRoute) {
-        case '/scoreboard':
-          body = ScoreboardScreen(apiClient: apiClient);
-        case '/leads':
-          body = LeadsScreen(apiClient: apiClient);
-        case '/activity':
-          body = ActivityScreen(apiClient: apiClient);
-        default:
-          body = const LandingPage();
-      }
+      body = ScoreboardScreen(apiClient: apiClient);
     }
 
     return Scaffold(
       appBar: _buildAppBar(context, isDesktop),
       body: body,
-      bottomNavigationBar:
-          (!isDesktop && !_isLanding) ? _buildBottomNav(context) : null,
+      bottomNavigationBar: null,
     );
   }
 
@@ -214,16 +156,6 @@ class _DashboardShell extends StatelessWidget {
             isActive: currentRoute == '/scoreboard',
             onTap: () => _navigate(context, '/scoreboard'),
           ),
-          _NavTextButton(
-            label: 'Leads',
-            isActive: currentRoute == '/leads',
-            onTap: () => _navigate(context, '/leads'),
-          ),
-          _NavTextButton(
-            label: 'Activity',
-            isActive: currentRoute == '/activity',
-            onTap: () => _navigate(context, '/activity'),
-          ),
           const SizedBox(width: 16),
         ],
       ],
@@ -245,33 +177,6 @@ class _DashboardShell extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomNav(BuildContext context) {
-    return NavigationBar(
-      height: 68,
-      selectedIndex: _dashboardIndex.clamp(0, 2),
-      onDestinationSelected: (index) {
-        final routes = ['/scoreboard', '/leads', '/activity'];
-        _navigate(context, routes[index]);
-      },
-      destinations: const [
-        NavigationDestination(
-          icon: Icon(Icons.leaderboard_outlined),
-          selectedIcon: Icon(Icons.leaderboard),
-          label: 'Scoreboard',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.person_search_outlined),
-          selectedIcon: Icon(Icons.person_search),
-          label: 'Leads',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.history_outlined),
-          selectedIcon: Icon(Icons.history),
-          label: 'Activity',
-        ),
-      ],
-    );
-  }
 }
 
 // =============================================================================
