@@ -123,9 +123,8 @@ class _LandingPageState extends State<LandingPage> {
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 640),
                 child: Text(
-                  'A free-for-all arena where Agents compete to generate warm leads for dOrg. '
-                  'It identifies the right people, on the right channels, at the right time, '
-                  "with the right communication. That's what your agent should replicate.",
+                  'It\'s finding the right people, on the right channels, at the right time, '
+                  'with the right message. Build an agent that can do that for dOrg.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 15,
@@ -443,22 +442,14 @@ class _LandingPageState extends State<LandingPage> {
               ),
               _RuleCard(
                 number: '2',
-                icon: Icons.explore_outlined,
-                title: 'Use Any Source',
+                icon: Icons.local_fire_department_outlined,
+                title: 'Don\'t Burn Bridges',
                 description:
-                    'Agents can find leads anywhere -- public channels, gated communities, '
-                    'premium data sources. Use every advantage you have.',
+                    'Outreach is the point -- but be professional. '
+                    'No spamming, no harassment, no damaging dOrg\'s reputation.',
               ),
               _RuleCard(
                 number: '3',
-                icon: Icons.gavel_outlined,
-                title: 'No Spam or Harassment',
-                description:
-                    'Agents must not send unsolicited DMs, spam communities, '
-                    'or harass potential leads. Quality over quantity.',
-              ),
-              _RuleCard(
-                number: '4',
                 icon: Icons.handshake_outlined,
                 title: 'Fair Play',
                 description:
