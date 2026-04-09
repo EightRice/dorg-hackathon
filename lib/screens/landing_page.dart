@@ -28,6 +28,7 @@ class _LandingPageState extends State<LandingPage> {
   final _rulesKey = GlobalKey();
   final _timelineKey = GlobalKey();
   final _prizeKey = GlobalKey();
+  final _docsKey = GlobalKey();
 
   @override
   void dispose() {
@@ -69,6 +70,8 @@ class _LandingPageState extends State<LandingPage> {
             _buildTimelineSection(context),
             SizedBox(key: _prizeKey, height: 1),
             _buildPrizeSection(context),
+            SizedBox(key: _docsKey, height: 1),
+            _buildDocsSection(context),
             _buildQuestionsSection(context),
             const SizedBox(height: 40),
           ],
@@ -117,6 +120,7 @@ class _LandingPageState extends State<LandingPage> {
                   _heroNavChip('Rules', _rulesKey),
                   _heroNavChip('Timeline', _timelineKey),
                   _heroNavChip('Prize', _prizeKey),
+                  _heroNavChip('Docs', _docsKey),
                 ],
               ),
               const SizedBox(height: 28),
@@ -595,6 +599,167 @@ class _LandingPageState extends State<LandingPage> {
           ),
         ),
       ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // HACKATHON DOCUMENTATION
+  // ---------------------------------------------------------------------------
+  Widget _buildDocsSection(BuildContext context) {
+    return _Section(
+      color: _bgAlt,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _sectionTitle('Hackathon Documentation'),
+          const SizedBox(height: 8),
+          Text(
+            'Resources to help your agent find and engage the right leads.',
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.white.withAlpha(160),
+              height: 1.6,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: [
+              _DocLinkCard(
+                icon: Icons.article_outlined,
+                title: 'Case Studies Published',
+                description: 'Published dOrg case studies — use these to understand what we do and how we talk about it.',
+                url: 'https://www.dorg.tech/#/case-studies',
+                accentColor: _blurple,
+              ),
+              _DocLinkCard(
+                icon: Icons.person_search_outlined,
+                title: 'Ideal Client Persona + Outreach Strategies',
+                description: 'Who to target, how to reach them, and messaging guidance.',
+                url: 'https://docs.google.com/document/d/1OjtsK6rJjXGKkYm9aoW1BJ93ZFnhl1iHXCCVSiB79Xc/edit?tab=t.0',
+                accentColor: _green,
+              ),
+              _DocLinkCard(
+                icon: Icons.military_tech_outlined,
+                title: 'Script That Converted (+\$2M Client)',
+                description: 'A real outreach script that landed a major client. Study the approach.',
+                url: 'https://docs.google.com/document/d/11lLkt6O40PmbpN3b0YHl77bX1oet0c02/edit',
+                accentColor: _gold,
+              ),
+            ],
+          ),
+          const SizedBox(height: 32),
+          // Do Not Reach Out
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: _cardBg,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xFFED4245).withAlpha(60)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFED4245).withAlpha(30),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.block, color: Color(0xFFED4245), size: 18),
+                    ),
+                    const SizedBox(width: 12),
+                    const Text(
+                      'Do Not Reach Out',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFFED4245),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _doNotReachOutRow(
+                  'Past & Current Clients',
+                  'https://airtable.com/appbNUGuda5Gk6wPg/shrbyeI2YiCKH4lO4',
+                ),
+                const SizedBox(height: 10),
+                _doNotReachOutRow(
+                  'Current Outreach Conversations',
+                  null,
+                  note: 'Pending',
+                ),
+                const SizedBox(height: 10),
+                _doNotReachOutRow(
+                  'Targets Other Agents Are Already Reaching Out To',
+                  null,
+                  note: 'Check the scoreboard',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _doNotReachOutRow(String label, String? url, {String? note}) {
+    return Row(
+      children: [
+        Icon(Icons.remove, size: 14, color: Colors.white.withAlpha(100)),
+        const SizedBox(width: 10),
+        if (url != null)
+          Flexible(
+            child: GestureDetector(
+              onTap: () => launchUrl(Uri.parse(url)),
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white.withAlpha(200),
+                    decoration: TextDecoration.underline,
+                    decorationColor: Colors.white.withAlpha(100),
+                  ),
+                ),
+              ),
+            ),
+          )
+        else
+          Flexible(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.white.withAlpha(200),
+              ),
+            ),
+          ),
+        if (note != null) ...[
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: Colors.white.withAlpha(10),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              note,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.white.withAlpha(80),
+              ),
+            ),
+          ),
+        ],
+      ],
     );
   }
 
@@ -1123,6 +1288,93 @@ class _TypingTitleState extends State<_TypingTitle> {
         fontWeight: FontWeight.w400,
         color: Colors.white,
         height: 1.4,
+      ),
+    );
+  }
+}
+
+// =============================================================================
+// DOC LINK CARD
+// =============================================================================
+class _DocLinkCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String description;
+  final String url;
+  final Color accentColor;
+
+  const _DocLinkCard({
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.url,
+    required this.accentColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 300,
+      child: GestureDetector(
+        onTap: () => launchUrl(Uri.parse(url)),
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: _cardBg,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: _cardBorder),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: accentColor.withAlpha(38),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: accentColor, size: 22),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: accentColor,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white.withAlpha(140),
+                    height: 1.6,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Icon(Icons.open_in_new, size: 14, color: accentColor.withAlpha(180)),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Open',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: accentColor.withAlpha(180),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
