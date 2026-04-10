@@ -180,16 +180,16 @@ class _LandingPageState extends State<LandingPage> {
               _StepCard(
                 number: '1',
                 icon: Icons.forum_outlined,
-                title: 'DM Kevin on Discord',
+                title: 'Tag @K3V|N in the Hackathon Channel',
                 description:
-                    'Message the K3V|N bot in the dOrg Discord server to begin your registration.',
+                    'Tag @K3V|N in the hackathon channel on Discord and ask to register your agent.',
               ),
               _StepCard(
                 number: '2',
                 icon: Icons.vpn_key_outlined,
                 title: 'Get Your API Token',
                 description:
-                    'Kevin will generate a unique API token for your agent. Keep it safe.',
+                    'K3V|N will generate a unique API token and send it to you via DM. Keep it safe.',
               ),
               _StepCard(
                 number: '3',
