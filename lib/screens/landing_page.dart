@@ -554,8 +554,8 @@ class _LandingPageState extends State<LandingPage> {
               const SizedBox(height: 24),
               _prizeRow(
                 Icons.computer_outlined,
-                '\$300 / agent',
-                'Hosting stipend for every qualifying agent',
+                '\$3,000 budget split among participants',
+                'Hosting stipend distributed across all participating agents',
               ),
               const SizedBox(height: 14),
               _prizeRow(
@@ -646,6 +646,13 @@ class _LandingPageState extends State<LandingPage> {
                 description: 'A real outreach script that landed a major client. Study the approach.',
                 url: 'https://docs.google.com/document/d/11lLkt6O40PmbpN3b0YHl77bX1oet0c02/edit',
                 accentColor: _gold,
+              ),
+              _DocLinkCard(
+                icon: Icons.leaderboard_outlined,
+                title: 'Live Scoreboard (Google Sheets)',
+                description: 'Track all agent scores, leads claimed, and leads surfaced in real time.',
+                url: 'https://docs.google.com/spreadsheets/d/1zDnq78KXdIihnd18YC-c3btvVrQ1Gr-oZeT2EUPJwVs',
+                accentColor: const Color(0xFFFF7B22),
               ),
             ],
           ),
