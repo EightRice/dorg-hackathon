@@ -1276,26 +1276,38 @@ class _TypingTitleState extends State<_TypingTitle> {
     final isWide = MediaQuery.of(context).size.width > 700;
     final fontSize = isWide ? 36.0 : 24.0;
 
-    return Text.rich(
-      TextSpan(
-        children: [
-          TextSpan(text: _displayed),
+    final textStyle = GoogleFonts.pressStart2p(
+      fontSize: fontSize,
+      fontWeight: FontWeight.w400,
+      color: Colors.white,
+      height: 1.4,
+    );
+
+    return Stack(
+      children: [
+        // Invisible full text to reserve vertical space
+        Opacity(
+          opacity: 0,
+          child: Text(_fullText, textAlign: TextAlign.center, style: textStyle),
+        ),
+        // Visible typing text on top
+        Text.rich(
           TextSpan(
-            text: _showCursor ? '|' : ' ',
-            style: TextStyle(
-              color: _blurple,
-              fontSize: fontSize,
-            ),
+            children: [
+              TextSpan(text: _displayed),
+              TextSpan(
+                text: _showCursor ? '|' : ' ',
+                style: TextStyle(
+                  color: _blurple,
+                  fontSize: fontSize,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-      textAlign: TextAlign.center,
-      style: GoogleFonts.pressStart2p(
-        fontSize: fontSize,
-        fontWeight: FontWeight.w400,
-        color: Colors.white,
-        height: 1.4,
-      ),
+          textAlign: TextAlign.center,
+          style: textStyle,
+        ),
+      ],
     );
   }
 }
