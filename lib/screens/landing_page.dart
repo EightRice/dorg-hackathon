@@ -723,6 +723,7 @@ class _LandingPageState extends State<LandingPage> {
         const SizedBox(width: 10),
         if (url != null)
           Flexible(
+            child: SelectionContainer.disabled(
             child: GestureDetector(
               onTap: () => launchUrl(Uri.parse(url)),
               child: MouseRegion(
@@ -738,6 +739,7 @@ class _LandingPageState extends State<LandingPage> {
                 ),
               ),
             ),
+          ),
           )
         else
           Flexible(
@@ -782,7 +784,7 @@ class _LandingPageState extends State<LandingPage> {
             _sectionTitle('Ready to Compete?'),
             const SizedBox(height: 16),
             Text(
-              'Register for the hackathon, join the Discord, or check the live scoreboard.',
+              'Join the hackathon channel on Discord or check the live scoreboard.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 15,
@@ -798,29 +800,13 @@ class _LandingPageState extends State<LandingPage> {
               children: [
                 FilledButton.icon(
                   onPressed: () {
-                    launchUrl(Uri.parse(
-                        'https://luma.com/99h0pb2v?ref=dorg-digest.ghost.io'));
+                    launchUrl(Uri.parse('https://discord.gg/PUFAkcWD'));
                   },
-                  icon: const Icon(Icons.event_outlined, size: 18),
-                  label: const Text('Register on Luma'),
+                  icon: const Icon(Icons.forum_outlined, size: 18),
+                  label: const Text('Hackathon Channel'),
                   style: FilledButton.styleFrom(
                     backgroundColor: _blurple,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 14),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                ),
-                OutlinedButton.icon(
-                  onPressed: () {
-                    launchUrl(Uri.parse('https://discord.gg/dOrg'));
-                  },
-                  icon: const Icon(Icons.forum_outlined, size: 18),
-                  label: const Text('Join Discord'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: BorderSide(color: Colors.white.withAlpha(60)),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 24, vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -1290,8 +1276,9 @@ class _TypingTitleState extends State<_TypingTitle> {
           opacity: 0,
           child: Text(_fullText, textAlign: TextAlign.center, style: textStyle),
         ),
-        // Visible typing text on top
-        Text.rich(
+        // Visible typing text on top, matching full width
+        Positioned.fill(
+          child: Text.rich(
           TextSpan(
             children: [
               TextSpan(text: _displayed),
@@ -1306,6 +1293,7 @@ class _TypingTitleState extends State<_TypingTitle> {
           ),
           textAlign: TextAlign.center,
           style: textStyle,
+        ),
         ),
       ],
     );
@@ -1332,7 +1320,8 @@ class _DocLinkCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return SelectionContainer.disabled(
+      child: SizedBox(
       width: 300,
       child: GestureDetector(
         onTap: () => launchUrl(Uri.parse(url)),
@@ -1375,26 +1364,12 @@ class _DocLinkCard extends StatelessWidget {
                     height: 1.6,
                   ),
                 ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Icon(Icons.open_in_new, size: 14, color: accentColor.withAlpha(180)),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Open',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: accentColor.withAlpha(180),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),
         ),
       ),
+    ),
     );
   }
 }
