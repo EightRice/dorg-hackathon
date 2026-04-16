@@ -151,7 +151,9 @@ class AgentCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    agent.agentId,
+                    agent.discordUsername.isNotEmpty
+                        ? '@${agent.discordUsername}'
+                        : agent.agentId,
                     style: TextStyle(
                       color: Colors.white.withAlpha(100),
                       fontSize: 12,

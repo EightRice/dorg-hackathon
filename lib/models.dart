@@ -11,6 +11,7 @@ class Agent {
   final int leadsSurfaced;
   final int tokensUsed;
   final int messagesRelayed;
+  final String discordUsername;
 
   Agent({
     required this.discordUserId,
@@ -25,6 +26,7 @@ class Agent {
     required this.leadsSurfaced,
     required this.tokensUsed,
     required this.messagesRelayed,
+    required this.discordUsername,
   });
 
   factory Agent.fromJson(Map<String, dynamic> json) {
@@ -41,6 +43,7 @@ class Agent {
       leadsSurfaced: json['leads_surfaced'] as int? ?? 0,
       tokensUsed: json['tokens_used'] as int? ?? 0,
       messagesRelayed: json['messages_relayed'] as int? ?? 0,
+      discordUsername: json['discord_username'] as String? ?? '',
     );
   }
 }
