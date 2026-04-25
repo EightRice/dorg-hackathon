@@ -487,7 +487,7 @@ class _LandingPageState extends State<LandingPage> {
           ),
           _TimelineItem(
             icon: Icons.lock_outline,
-            title: 'Mon, April 27, 7:00 PM CEST -- Kick-off & Registration Closes',
+            title: 'Mon, April 27, 6:00 PM CEST -- Kick-off & Registration Closes',
             subtitle: 'Last call to register. Budget split across all participating agents.',
             color: const Color(0xFFFF7B22),
           ),
